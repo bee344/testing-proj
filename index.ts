@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from '
 import path, { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import solc from 'solc';
+import os from 'os';
 
 type SolcInput = {
     [contractName: string]: {
@@ -58,6 +59,8 @@ const binArtifacts: { contracts: BinOutput[] } = {
 const jsonArtifacts: { contracts: BinOutput[] } = {
     contracts: []
 };
+
+const platform = os.platform();
 
 function tryResolveJsonImport(importPath: string) {
     // resolve local path
@@ -465,8 +468,8 @@ async function main(): Promise<void> {
     await processInBatches(files);
 
     // Write the output to the JSON files after all compiles are done
-    writeFileSync('jsonFullPromisedCompilationArtifacts.json', JSON.stringify(jsonArtifacts), 'utf-8');
-    writeFileSync('binFullPromisedCompilationArtifacts.json', JSON.stringify(binArtifacts), 'utf-8');
+    writeFileSync(`${platform}JsonCompilationArtifacts.json`, JSON.stringify(jsonArtifacts), 'utf-8');
+    writeFileSync(`${platform}BinCompilationArtifacts.json`, JSON.stringify(binArtifacts), 'utf-8');
 
     const end = Date.now();
     const duration = end - start;
